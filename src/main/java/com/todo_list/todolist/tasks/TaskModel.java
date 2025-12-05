@@ -1,4 +1,4 @@
-package com.todo_list.todolist.TasksModel;
+package com.todo_list.todolist.tasks;
 
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;

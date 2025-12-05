@@ -1,4 +1,4 @@
-package com.todo_list.todolist.UserModel;
+package com.todo_list.todolist.user;
 
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
