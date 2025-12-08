@@ -3,9 +3,9 @@ spring:
     name: todolist
 
   datasource:
-    url: ${PG_DB_URL}
-    username: ${PG_DB_USER}
-    password: ${PG_DB_PASSWORD}
+    url: ${PG-DB-URL}
+    username: ${PG-DB-USER}
+    password: ${PG-DB-PASSWORD}
     driver-class-name: org.postgresql.Driver
 
   jpa:
