@@ -5,6 +5,7 @@ import com.todo_list.todolist.user.UserModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +18,9 @@ public class UserController {
     @Autowired
     private IUserRepository userRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @PostMapping("/") // Cadastro
     public ResponseEntity create(@RequestBody UserModel userModel) {
         var user = this.userRepository.findByUsername(userModel.getUsername());
@@ -24,9 +28,12 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Usuário já existe");
         }
 
-        var passwordHashred = BCrypt.withDefaults()
-                .hashToString(12, userModel.getPassword().toCharArray());
+//        var passwordHashred = BCrypt.withDefaults()
+//                .hashToString(12, userModel.getPassword().toCharArray());
+//
+//        userModel.setPassword(passwordHashred);
 
+        var passwordHashred = passwordEncoder.encode(userModel.getPassword());
         userModel.setPassword(passwordHashred);
 
         var userCreated = this.userRepository.save(userModel);
