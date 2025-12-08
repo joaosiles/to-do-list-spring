@@ -21,9 +21,10 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/users/").permitAll()
-                        .requestMatchers("/users/login").permitAll()
+                        .requestMatchers("/users/**").permitAll()
+                        .requestMatchers("/tasks").permitAll()
                         .requestMatchers("/tasks/**").permitAll()
+                        .requestMatchers("/error").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(filterTaskAuth, UsernamePasswordAuthenticationFilter.class);
