@@ -56,9 +56,6 @@ public class FilterTaskAuth extends OncePerRequestFilter {
                 return;
             }
 
-            // Valida a senha (IMPORTANTE: Se você criptografou com BCrypt na criação, precisa validar com BCrypt aqui)
-            // Vou assumir comparação simples por enquanto, mas o ideal é usar BCrypt.verifyer().verify(...)
-            // Se estiver usando BCrypt no cadastro, troque a linha abaixo!
             var passwordVerify = passwordEncoder.matches(password, user.getPassword());
 
             if (passwordVerify) {

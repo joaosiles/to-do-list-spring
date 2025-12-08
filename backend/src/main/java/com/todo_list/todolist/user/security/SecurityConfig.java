@@ -30,6 +30,4 @@ public class SecurityConfig {
 
         return http.build();
     }
-
-    // O método passwordEncoder() FOI REMOVIDO DAQUI
 }
