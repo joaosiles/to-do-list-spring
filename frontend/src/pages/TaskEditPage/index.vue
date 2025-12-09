@@ -36,22 +36,11 @@
                 <template v-slot:prepend>
                   <q-icon name="event" class="cursor-pointer">
                     <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                      <q-date v-model="form.startAt" mask="YYYY-MM-DD HH:mm">
+                      <q-date v-model="form.startAt" mask="YYYY-MM-DD">
                         <div class="row items-center justify-end">
                           <q-btn v-close-popup :label="translate('taskEdit.close')" color="primary" flat />
                         </div>
                       </q-date>
-                    </q-popup-proxy>
-                  </q-icon>
-                </template>
-                 <template v-slot:append>
-                  <q-icon name="access_time" class="cursor-pointer">
-                    <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                      <q-time v-model="form.startAt" mask="YYYY-MM-DD HH:mm" format24h>
-                        <div class="row items-center justify-end">
-                          <q-btn v-close-popup :label="translate('taskEdit.close')" color="primary" flat />
-                        </div>
-                      </q-time>
                     </q-popup-proxy>
                   </q-icon>
                 </template>
@@ -63,22 +52,11 @@
                 <template v-slot:prepend>
                   <q-icon name="event" class="cursor-pointer">
                     <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                      <q-date v-model="form.endAt" mask="YYYY-MM-DD HH:mm">
+                      <q-date v-model="form.endAt" mask="YYYY-MM-DD">
                         <div class="row items-center justify-end">
                           <q-btn v-close-popup :label="translate('taskEdit.close')" color="primary" flat />
                         </div>
                       </q-date>
-                    </q-popup-proxy>
-                  </q-icon>
-                </template>
-                 <template v-slot:append>
-                  <q-icon name="access_time" class="cursor-pointer">
-                    <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                      <q-time v-model="form.endAt" mask="YYYY-MM-DD HH:mm" format24h>
-                        <div class="row items-center justify-end">
-                          <q-btn v-close-popup :label="translate('taskEdit.close')" color="primary" flat />
-                        </div>
-                      </q-time>
                     </q-popup-proxy>
                   </q-icon>
                 </template>
@@ -110,15 +88,15 @@ const router = useRouter();
 const quasar = useQuasar();
 const { t: translate } = useI18n();
 
-const isEditing = computed(() => route.params.id !== 'new');
+const isEditing = computed(() => !!route.params.id && route.params.id !== 'new');
 const loading = ref(false);
 
 const form = ref({
   title: '',
   description: '',
   priority: 'Media',
-  startAt: date.formatDate(Date.now(), 'YYYY-MM-DD HH:mm'),
-  endAt: date.formatDate(date.addToDate(Date.now(), { days: 1 }), 'YYYY-MM-DD HH:mm')
+  startAt: date.formatDate(Date.now(), 'YYYY-MM-DD'),
+  endAt: date.formatDate(date.addToDate(Date.now(), { days: 1 }), 'YYYY-MM-DD')
 });
 
 onMounted(async () => {
@@ -132,8 +110,8 @@ onMounted(async () => {
                 title: task.title,
                 description: task.description,
                 priority: task.priority || 'Media',
-                startAt: date.formatDate(task.startAt, 'YYYY-MM-DD HH:mm'),
-                endAt: date.formatDate(task.endAt, 'YYYY-MM-DD HH:mm')
+                startAt: date.formatDate(task.startAt, 'YYYY-MM-DD'),
+                endAt: date.formatDate(task.endAt, 'YYYY-MM-DD')
             };
         } else {
             quasar.notify({ message: translate('taskEdit.notFound'), color: 'negative' });
@@ -153,8 +131,8 @@ const onSubmit = async () => {
     try {
         const payload = {
             ...form.value,
-            startAt: form.value.startAt.replace(' ', 'T') + ':00',
-            endAt: form.value.endAt.replace(' ', 'T') + ':00'
+            startAt: form.value.startAt + 'T00:00:00',
+            endAt: form.value.endAt + 'T00:00:00'
         };
 
         if (isEditing.value) {
