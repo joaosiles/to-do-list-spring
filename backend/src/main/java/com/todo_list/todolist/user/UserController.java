@@ -1,6 +1,5 @@
 package com.todo_list.todolist.user;
 
-import at.favre.lib.crypto.bcrypt.BCrypt;
 import com.todo_list.todolist.user.UserModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,10 +27,10 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Usuário já existe");
         }
 
-//        var passwordHashred = BCrypt.withDefaults()
-//                .hashToString(12, userModel.getPassword().toCharArray());
-//
-//        userModel.setPassword(passwordHashred);
+        // var passwordHashred = BCrypt.withDefaults()
+        // .hashToString(12, userModel.getPassword().toCharArray());
+        //
+        // userModel.setPassword(passwordHashred);
 
         var passwordHashred = passwordEncoder.encode(userModel.getPassword());
         userModel.setPassword(passwordHashred);
@@ -48,14 +47,15 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Usuário ou senha incorretos");
         }
 
-        var passwordVerify = BCrypt.verifyer().verify(
-                userModel.getPassword().toCharArray(),
-                user.getPassword());
+        var passwordVerify = passwordEncoder.matches(userModel.getPassword(), user.getPassword());
 
-        if (!passwordVerify.verified) {
+        if (!passwordVerify) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Usuário ou senha incorretos");
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body("Login realizado com sucesso!");
+        String token = java.util.Base64.getEncoder().encodeToString(
+                (userModel.getUsername() + ":" + userModel.getPassword()).getBytes());
+
+        return ResponseEntity.status(HttpStatus.OK).body(java.util.Map.of("token", token));
     }
 }
