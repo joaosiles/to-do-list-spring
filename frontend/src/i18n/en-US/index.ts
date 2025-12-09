@@ -15,6 +15,7 @@ export default {
     title: 'Register',
     subtitle: 'Create your account',
     username: 'Username',
+    email: 'Email',
     password: 'Password',
     submit: 'Sign Up',
     backToLogin: 'Back to Login',

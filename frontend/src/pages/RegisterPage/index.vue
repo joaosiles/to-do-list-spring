@@ -18,6 +18,14 @@
 
           <q-input
             filled
+            v-model="email"
+            :label="translate('register.email')"
+            lazy-rules
+            :rules="[ val => val && val.length > 0 || translate('taskEdit.required')]"
+          />
+
+          <q-input
+            filled
             type="password"
             v-model="password"
             :label="translate('register.password')"
@@ -49,6 +57,7 @@ const quasar = useQuasar();
 const router = useRouter();
 
 const username = ref('');
+const email = ref('');
 const password = ref('');
 const loading = ref(false);
 
@@ -59,6 +68,7 @@ const onSubmit = async () => {
     // UI tem apenas username e password. Usaremos username como name.
     await api.post('/users/', {
       username: username.value,
+      email: email.value,
       name: username.value, 
       password: password.value
     });

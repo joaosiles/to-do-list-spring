@@ -15,6 +15,7 @@ export default {
     title: 'Cadastro',
     subtitle: 'Crie sua conta',
     username: 'Usuário',
+    email: 'Email',
     password: 'Senha',
     submit: 'Cadastrar',
     backToLogin: 'Voltar para Login',
