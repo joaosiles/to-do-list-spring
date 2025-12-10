@@ -1,5 +1,6 @@
 package com.todo_list.todolist.user;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -11,6 +12,7 @@ public class UserModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private UUID id;
 
     @Column(unique = true)
@@ -23,6 +25,7 @@ public class UserModel {
     private String password;
 
     @CreationTimestamp
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private LocalDateTime createdAt;
 
     public UUID getId() {
@@ -49,9 +52,13 @@ public class UserModel {
         this.name = name;
     }
 
-    public String getEmail() { return email; }
+    public String getEmail() {
+        return email;
+    }
 
-    public void setEmail(String email) { this.email = email; }
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
     public String getPassword() {
         return password;

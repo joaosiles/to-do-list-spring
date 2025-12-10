@@ -1,5 +1,6 @@
 package com.todo_list.todolist.tasks;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -11,8 +12,10 @@ public class TaskModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private UUID id;
 
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private UUID idUser;
 
     @Column(length = 50)
@@ -32,6 +35,7 @@ public class TaskModel {
 
     @CreationTimestamp
     @Column(name = "created_at")
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY)
     private LocalDateTime createdAt;
 
     public UUID getId() {

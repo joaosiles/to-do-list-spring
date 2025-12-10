@@ -12,14 +12,26 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping("/tasks")
+@Tag(name = "Tarefas", description = "Gerenciamento de tarefas")
 public class TaskController {
 
     @Autowired
     private ITaskRepository taskRepository;
 
     // Cria task
+
+    @Operation(summary = "Criar tarefa", description = "Cria uma nova tarefa associada ao usuário autenticado")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Tarefa criada com sucesso"),
+            @ApiResponse(responseCode = "400", description = "Erro na validação dos dados")
+    })
     @PostMapping("/")
     public ResponseEntity create(@RequestBody TaskModel taskModel, HttpServletRequest request) {
 
@@ -49,17 +61,26 @@ public class TaskController {
     }
 
     // Lista task com paginação
+
+    @Operation(summary = "Listar tarefas", description = "Lista todas as tarefas do usuário autenticado com paginação")
+    @ApiResponse(responseCode = "200", description = "Lista de tarefas recuperada com sucesso")
     @GetMapping("/")
     public ResponseEntity<Page<TaskModel>> list(
             HttpServletRequest request,
-            @PageableDefault(page = 0, size = 9) Pageable pageable
-    ) {
+            @PageableDefault(page = 0, size = 9) Pageable pageable) {
         var idUser = request.getAttribute("idUser");
         Page<TaskModel> tasks = this.taskRepository.findByIdUser((UUID) idUser, pageable);
         return ResponseEntity.ok(tasks);
     }
 
     // Busca task por {id}
+
+    @Operation(summary = "Detalhar tarefa", description = "Busca uma tarefa específica pelo ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Tarefa encontrada"),
+            @ApiResponse(responseCode = "404", description = "Tarefa não encontrada"),
+            @ApiResponse(responseCode = "400", description = "Usuário sem permissão")
+    })
     @GetMapping("/{id}")
     public ResponseEntity unique(@PathVariable UUID id, HttpServletRequest request) {
 
@@ -81,6 +102,13 @@ public class TaskController {
     }
 
     // Atualiza task
+
+    @Operation(summary = "Atualizar tarefa", description = "Atualiza uma tarefa existente pelo ID. Todos os campos no corpo da requisição são opcionais.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Tarefa atualizada com sucesso"),
+            @ApiResponse(responseCode = "400", description = "Erro na validação"),
+            @ApiResponse(responseCode = "404", description = "Tarefa não encontrada")
+    })
     @PutMapping("/{id}")
     public ResponseEntity update(@RequestBody TaskModel taskModel, @PathVariable UUID id, HttpServletRequest request) {
 
@@ -124,6 +152,13 @@ public class TaskController {
     }
 
     // Deleta task
+
+    @Operation(summary = "Deletar tarefa", description = "Remove uma tarefa existente pelo ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Tarefa deletada com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Tarefa não encontrada"),
+            @ApiResponse(responseCode = "400", description = "Sem permissão para deletar")
+    })
     @DeleteMapping("/{id}")
     public ResponseEntity delete(@PathVariable UUID id, HttpServletRequest request) {
 
