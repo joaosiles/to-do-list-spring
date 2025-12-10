@@ -21,4 +21,4 @@ COPY --from=build ${DEPENDENCY}/BOOT-INF/classes /app
 
 # ... (restante do arquivo igual) ...
 
-ENTRYPOINT ["java", "-Djava.net.preferIPv4Stack=true", "-cp", "app:app/lib/*", "com.todo_list.todolist.TodolistApplication"]
+ENTRYPOINT ["java", "-cp", "app:app/lib/*", "com.todo_list.todolist.TodolistApplication"]

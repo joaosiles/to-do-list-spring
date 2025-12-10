@@ -103,8 +103,9 @@ onMounted(async () => {
   if (isEditing.value) {
     try {
         loading.value = true;
-        const response = await api.get('/tasks/');
-        const task = response.data.find((t: any) => t.id == route.params.id);
+        const response = await api.get(`/tasks/${route.params.id}`);
+        const task = response.data;
+        
         if (task) {
             form.value = {
                 title: task.title,
@@ -113,7 +114,7 @@ onMounted(async () => {
                 startAt: date.formatDate(task.startAt, 'YYYY-MM-DD'),
                 endAt: date.formatDate(task.endAt, 'YYYY-MM-DD')
             };
-        } else {
+        } else {             
             quasar.notify({ message: translate('taskEdit.notFound'), color: 'negative' });
             router.push('/tasks');
         }

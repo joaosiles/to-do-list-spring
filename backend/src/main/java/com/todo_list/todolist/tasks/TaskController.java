@@ -2,12 +2,14 @@ package com.todo_list.todolist.tasks;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -21,15 +23,16 @@ public class TaskController {
     @PostMapping("/")
     public ResponseEntity create(@RequestBody TaskModel taskModel, HttpServletRequest request) {
 
-        // Recupera o ID do usuário (vindo do Filtro)
         var idUser = request.getAttribute("idUser");
         taskModel.setIdUser((UUID) idUser);
 
-        // Validação das Datas
         var currentDate = LocalDateTime.now();
-        if (currentDate.isAfter(taskModel.getStartAt()) || currentDate.isAfter(taskModel.getEndAt())) {
+
+        if (currentDate.toLocalDate().isAfter(taskModel.getStartAt().toLocalDate()) ||
+                currentDate.toLocalDate().isAfter(taskModel.getEndAt().toLocalDate())) {
+
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("A data de início/término deve ser maior que a data atual");
+                    .body("A data de início/término não pode ser anterior à data de hoje");
         }
 
         if (taskModel.getStartAt().isAfter(taskModel.getEndAt())) {
@@ -45,12 +48,36 @@ public class TaskController {
         }
     }
 
-    // Lista task
+    // Lista task com paginação
     @GetMapping("/")
-    public List<TaskModel> list(HttpServletRequest request) {
+    public ResponseEntity<Page<TaskModel>> list(
+            HttpServletRequest request,
+            @PageableDefault(page = 0, size = 9) Pageable pageable
+    ) {
         var idUser = request.getAttribute("idUser");
-        var tasks = this.taskRepository.findByIdUser((UUID) idUser);
-        return tasks;
+        Page<TaskModel> tasks = this.taskRepository.findByIdUser((UUID) idUser, pageable);
+        return ResponseEntity.ok(tasks);
+    }
+
+    // Busca task por {id}
+    @GetMapping("/{id}")
+    public ResponseEntity unique(@PathVariable UUID id, HttpServletRequest request) {
+
+        var task = this.taskRepository.findById(id).orElse(null);
+
+        if (task == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Tarefa não encontrada.");
+        }
+
+        // Valida se o usuário que está buscando é o dono da tarefa
+        var idUser = request.getAttribute("idUser");
+        if (!task.getIdUser().equals(idUser)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Usuário não tem permissão para visualizar essa tarefa.");
+        }
+
+        return ResponseEntity.ok(task);
     }
 
     // Atualiza task

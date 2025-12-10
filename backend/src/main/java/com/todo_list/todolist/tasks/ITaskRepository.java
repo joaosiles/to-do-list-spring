@@ -1,9 +1,13 @@
 package com.todo_list.todolist.tasks;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+
 import java.util.UUID;
-import java.util.List;
 
 public interface ITaskRepository extends JpaRepository<TaskModel, UUID> {
-    List<TaskModel> findByIdUser(UUID idUser);
+
+    Page<TaskModel> findByIdUser(UUID idUser, Pageable pageable);
+
 }
