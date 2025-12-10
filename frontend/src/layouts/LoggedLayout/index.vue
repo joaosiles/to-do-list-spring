@@ -2,10 +2,10 @@
   <q-layout view="lHh Lpr fff">
     <q-header elevated class="bg-primary text-white">
       <q-toolbar>
-        <q-avatar icon="account_circle" />
-        <q-toolbar-title>
-          {{ username }}
-        </q-toolbar-title>
+        <q-btn flat round dense icon="home" to="/tasks" class="q-mr-sm" />
+        <div class="text-h6">
+          {{ formattedUsername }}
+        </div>
         <q-space />
         <q-select
            v-model="locale"
@@ -14,11 +14,23 @@
            borderless
            emit-value
            map-options
-           options-dense
            style="min-width: 100px"
-           class="q-mr-md"
-        />
-        <q-btn flat round dense icon="logout" @click="logout" :label="translate('layout.logout')" />
+           class="text-white"
+           popup-content-class="bg-primary text-white"
+           dark
+        >
+          <template v-slot:option="scope">
+            <q-item
+              v-bind="scope.itemProps"
+              :class="scope.selected ? 'bg-blue-6 text-yellow text-weight-bold' : 'text-white'"
+            >
+              <q-item-section>
+                <q-item-label>{{ scope.opt.label }}</q-item-label>
+              </q-item-section>
+            </q-item>
+          </template>
+        </q-select>
+        <q-btn flat round dense icon="logout" @click="logout" :label="translate('layout.logout')" style="margin-left: 20px" />
       </q-toolbar>
     </q-header>
 
@@ -28,10 +40,8 @@
   </q-layout>
 </template>
 
-<style src="./index.scss"></style>
-
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useQuasar } from 'quasar';
 import { useI18n } from 'vue-i18n';
@@ -44,6 +54,11 @@ const localeOptions = [
   { value: 'en-US', label: 'English' },
   { value: 'pt-BR', label: 'Português' }
 ];
+
+const formattedUsername = computed(() => {
+    if (!username.value) return '';
+    return username.value.charAt(0).toUpperCase() + username.value.slice(1);
+});
 
 onMounted(() => {
   const storedUser = localStorage.getItem('username');
